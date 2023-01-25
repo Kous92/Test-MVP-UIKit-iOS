@@ -46,6 +46,7 @@ final class Presenter {
     }
     
     // @MainActor remplace DispatchQueue.main.async, mais doit être appelé avec await dans un bloc async.
+    // La présentation va ici dire à la vue de se mettre à jour, par le biais de la délégation
     @MainActor private func updateView() {
         guard drivers.count > 0 else {
             delegate?.didErrorOccured(with: errorMessage)

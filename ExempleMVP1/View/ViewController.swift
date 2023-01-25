@@ -14,7 +14,7 @@ final class ViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     
     // Référence circulaire. Forte de la vue avec le présentateur, faible du présentateur vers la vue.
-    private let presenter = Presenter(with: NetworkAPIService())
+    private lazy var presenter = Presenter(with: NetworkAPIService())
     
     override func viewDidLoad() {
         super.viewDidLoad()
