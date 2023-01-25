@@ -7,14 +7,14 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
 
     @IBOutlet weak var loadingSpinner: UIActivityIndicatorView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
     // Référence circulaire. Forte de la vue avec le présentateur, faible du présentateur vers la vue.
-    private let presenter = Presenter()
+    private let presenter = Presenter(with: NetworkAPIService())
     
     override func viewDidLoad() {
         super.viewDidLoad()

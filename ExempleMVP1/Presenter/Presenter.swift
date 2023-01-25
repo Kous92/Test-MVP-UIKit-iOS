@@ -7,14 +7,19 @@
 
 import Foundation
 
-class Presenter {
+final class Presenter {
     private var driversData = [Driver]()
     var drivers = [Driver]()
     private var errorMessage: String = ""
-    private let apiService = APIService()
+    private let apiService: APIService
     
     // Référence avec la vue, attention à la rétention de cycle (memory leak)
     weak private var delegate: PresenterViewDelegate?
+    
+    // Injection de dépendance pour le mock ou le service réseau
+    init(with apiService: APIService) {
+        self.apiService = apiService
+    }
     
     func setViewDelegate(delegate: PresenterViewDelegate){
         self.delegate = delegate
@@ -29,7 +34,9 @@ class Presenter {
                 errorMessage = message
             }
             
-            updateView()
+            print("Data: \(drivers.count), errorMessage = \(errorMessage)")
+            
+            await updateView()
         }
     }
     
@@ -38,14 +45,13 @@ class Presenter {
         delegate?.didLoadData()
     }
     
-    private func updateView() {
-        DispatchQueue.main.async { [weak self] in
-            guard (self?.drivers.count ?? 0) > 0 else {
-                self?.delegate?.didErrorOccured(with: self?.errorMessage ?? "Une erreur est survenue")
-                return
-            }
-            
-            self?.delegate?.didLoadData()
+    // @MainActor remplace DispatchQueue.main.async, mais doit être appelé avec await dans un bloc async.
+    @MainActor private func updateView() {
+        guard drivers.count > 0 else {
+            delegate?.didErrorOccured(with: errorMessage)
+            return
         }
+        
+        delegate?.didLoadData()
     }
 }
